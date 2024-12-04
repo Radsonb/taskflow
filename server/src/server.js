@@ -1,18 +1,30 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const { initDataBase } = require('./config/database');
 const routes = require('./routes');
+require('dotenv').config();
+const { connectDB } = require('./config/db');
 
-const app = express();
+var app = express();
+app.use(express.json())
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+connectDB();
 
-initDataBase();
+const port = process.env.PORT || 5050;
 
 app.use('/api', routes);
 
-app.listen(process.env.PORT, () => {
-    console.log(`Servidor rodando na port : ${process.env.PORT}`)
+app.use((err, req, res, next) => {
+    console.error('Erro interno:', err);
+    res.status(500).json({
+      message: 'Erro interno do servidor. Por favor, tente novamente mais tarde.'
+    });
+  });
+
+app.listen(port, (err) => {
+    if(err) {
+        console.error('Erro ao iniciar o servidor:', err);
+        process.exit(1);        
+    } else {
+        console.log(`Server started on port ${port}`);
+        
+    }
 })

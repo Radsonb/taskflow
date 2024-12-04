@@ -1,8 +1,13 @@
 const express = require('express');
-const tasksRoutes = require('./tasks');
-
 const router = express.Router();
 
-router.use('/tasks', tasksRoutes);
+router.use((req, res, next) => {
+    console.log('Horário: ', Date.now());
+    next();
+  });
 
-module.exports = router;
+const usersRoutes = require('./users');
+
+router.use('/users', usersRoutes);
+
+module.exports = router
